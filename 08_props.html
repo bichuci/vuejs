@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Les props</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <div id="app">
+
+        <!-- Mes props se passent en v-binding
+            - Via une variable de data, de computed, une methods...
+            - En dur dans les guillemets : 'Hello', true , 1 ....
+            - Elles peuvent être modifiées ( visuellement ) par des filtres!
+            -->
+
+        <home :message=" 'Coucou !' "></home>
+        <home :message=" greetings | uppercase"></home>
+        <home :message=" greetings + ' ' + name "></home>
+        <home :numb=" greetings"></home>
+        <home :message="greetings" :numb="432"></home>
+
+        <input-component type="date"></input-component>
+    </div>
+
+
+<script>
+    class Heros {
+        name;
+        power;
+        group;
+
+        constructor(p_name) {
+            this.name = p_name;
+        }
+    }
+
+
+
+
+    Vue.filter('uppercase', function(value){
+        return value.toUpperCase()
+    })
+
+    Vue.component('input-component', {
+        inheritAttrs: false,
+        template: `
+        <div class=form-group>
+            <label> Entrer quelque chose</label>
+            <input v-bind="$attrs" class="form-control">
+        </div>
+        `
+    })
+
+    Vue.component('home', {
+        template: `
+        <div>
+            <p v-show="message" class="alert alert-info col-4">{{ message }}</p>
+            <p v-show="numb" class="alert alert-warning col-4"> {{ numb }}</p>
+            <p class="alert alert alert-danger col-4"> {{ detailed_prop }}</p>
+            <p class="alert alert alert-secondary col-4"> {{ obj_detailed.name }}</p>
+        </div>
+        `,
+        //props: ['message']
+        props: {
+            any: undefined,
+            any_bis: null,
+            message: String,
+            numb : Number,
+            bool: Boolean,
+            obj : Object,
+            list: Array,
+            func: Function,
+            prom: Promise,
+            detailed_prop:{
+                type: Number,
+                default: 2345
+            },
+            obj_detailed:{
+                type: Object,
+                default: function(){
+                    return new Heros('Batman') // ça fonctionne
+                    // return {name: 'Mon Objet par défaut'} => ça fonctionne aussi
+                },
+            },
+            list_detailed:{
+                type: Array,
+                default: function(){
+                    return ['Batman', 'Joker', 'Superman', 'Wonderwoman']
+                }
+            },
+            hero:{
+                type: Heros,
+                default: function() {
+                    // return { name: 'Wonder Woman', power: 'Lasso', group:'DC'} => cela retourne un objet et non crée et instancie la classe Heros ( ne fonctionnera pas )
+                    const hero =  new Heros('Batman');
+                    hero.power =  'Etre blindé';
+                    hero.group = 'DC';
+                    return hero;
+                }
+            },
+            fruit: {
+                type: String,
+                validator: function(value){
+                    /* Vérification de value si correspond à critères => true si ok => false si non ok*/
+                    return ['pomme', 'poire', 'mangue', 'framboise'].indexOf(value) !== -1;
+                    /*
+                        Renvoie false si value n'existe pas dans le tableau, true sinon
+                       (indexOf renvoie -1 si il ne trouve pas ce qu'il cherche
+                    */
+                }
+            }
+        },
+
+
+    })
+
+
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            greetings: 'Bonjour',
+            name: 'Aurélien',
+        },
+
+    })
+</script>
+</body>
+</html>

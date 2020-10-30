@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Les composants</title>
+</head>
+<body>
+    <div id="app">
+        <div class="container d-flex flex-column align-items-center">
+            <button-component></button-component>
+            <message-component v-bind:message="msg" class="col-4"></message-component>
+            <message-component v-bind:message="'Bonjour le monde!'" class="col-4 alert-danger"></message-component>
+
+            <h5>Mes messages</h5>
+            <message-component v-for="m of l_messages" :key="m" :message="m" class="col-4 alert-warning"></message-component>
+
+            <h5>Mes messages bis</h5>
+            <list-component :list="l_messages" class="col-4"></list-component>
+
+            <h5>Mon héros : </h5>
+            <hero-component :hero="hero"></hero-component>
+
+            <h5>Ma liste de héros : </h5>
+            <heroes-component :heroes="l_heroes"></heroes-component>
+        </div>
+
+    </div>
+
+<!-- DEBUT DU JS -->
+    <script>
+        /*
+            Les Composants : 
+        */
+
+        Vue.component("button-component", {
+            template: '<button class="btn btn-info" @click="counter++"> Vous avez cliquer : {{ counter }} fois</button>',
+
+        data: function(){
+                return{
+                    counter: 0
+                }
+            }
+        })
+
+        Vue.component("message-component", {
+            template: '<p class="alert alert-warning">{{ message }}</p>',
+            props : ['message'],
+        })
+
+        Vue.component("list-component", {
+            template: `
+                <ul class="list-group">
+                    <li v-for="item of list" class="list-group-item text-danger">{{ item }}</li>
+                </ul>
+            `,
+            props: ['list']
+        })
+
+        Vue.component("hero-component", {
+            template: `
+                <p class="alert alert-info">{{ hero.id }} : {{ hero.name }} -> {{ hero.group }}</p>
+            `,
+            props: ['hero']
+        })
+
+        Vue.component("heroes-component", {
+            template: `
+                <div class="row">
+                    <hero-component v-for="h of heroes" :key="h.id" class=" m-1" :hero="h"></hero-component>
+                </div>
+
+            `,
+            props:['heroes'],
+        })
+        const vm = new Vue({
+            el:"#app",
+            data: {
+                msg: "Hello World",
+                l_messages: ['Bonjour', 'Holé', 'Konichiwa', 'Ni Hao', 'Salam', 'Hallo'],
+                list: [''],
+                hero: {id: 1, name: 'BATMAN', group: 'DC'},
+                l_heroes: [
+                    {id: 1, name: 'BATMAN', group: 'DC'},
+                    {id: 2, name: 'SUPERMAN', group: 'DC'},
+                    {id: 3, name: 'WONDER WOMAN', group: 'DC'},
+                    {id: 4, name: 'GROOT', group: 'MARVEL'},
+                    {id: 5, name: 'MISS MARVEL', group: 'MARVEL'},
+                ]
+            }
+        })
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
